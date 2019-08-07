@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "522488385",
+    "firebase_url": "https://narc-73428.firebaseio.com",
+    "project_id": "narc-73428",
+    "storage_bucket": "narc-73428.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:522488385:android:1b1578a20e320ec9",
+        "android_client_info": {
+          "package_name": "com.byrdofafeather.narc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "522488385-08t42ev8n6dbtsja62tckfov8kskoul1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMsRUwm2TdNHGkF3Mx6VLZ1m92AlYVjkE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "522488385-08t42ev8n6dbtsja62tckfov8kskoul1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
