@@ -12,7 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:narc/main.dart';
 
-final String baseURL = "https://www.byrdof.dev";
+final String baseURL = "http://192.168.1.233:8000";
 final String loginURL = "$baseURL/api/token_auth/";
 final String createURL = "$baseURL/api/create_user/";
 
@@ -140,10 +140,10 @@ Future<List<GenericCanvasItem>> getCourses() async {
   return  _getGeneric(endPoint, token);
 }
 
-Future<List<GenericCanvasItem>> getModules(courseID) async {
+Future<List<GenericCanvasItem>> getModules(String courseID) async {
   String token = await storage.read(key: "apiKey");
   String url = await storage.read(key: "url");
-  String endPoint = "https://" + url + "/api/v1/courses/" + courseID + "/modules";
+  String endPoint = "https://" + url + "/api/v1/courses/$courseID/modules";
   return  _getGeneric(endPoint, token);
 }
 
@@ -439,7 +439,7 @@ Future<String> startSeparationTask(String quizID, String password, String quizNa
   data = await anonymizeData(data, password, quizName);
   data["secret"] = "MyNameIsM";
   String canStore = await storage.read(key: "canStore");
-  data["storage"] = canStore.isNotEmpty;
+  data["storage"] = canStore == null ? false : true;
   String token = await storage.read(key: "token");
 
   var response;

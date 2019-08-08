@@ -76,6 +76,7 @@ class _NarcResultsGetPasswordState extends State<NarcResultsGetPassword> {
                                           "that someone has cheated or that someone has not cheated. "),
                                       RaisedButton(
                                         onPressed: () {
+                                          Navigator.pop(context);
                                           Navigator.pushReplacement(
                                               context,
                                               MaterialPageRoute(
@@ -148,6 +149,7 @@ class _NarcResults extends State<NarcResults> {
     String salt = await storage.read(key: "encryptionSalt");
     String key = await cryptor.generateKeyFromPassword(indexOrg + password, salt);
     SQLiteDatabase database = await getOrCreateDatabase(widget.quizName);
+
     // Note that base is a unique identifier so this will only return a single value!
     for (var row in await database.rawQuery("""
     SELECT name, time_taken, average_time_between_questions, page_leaves FROM userdata WHERE base = "$code"

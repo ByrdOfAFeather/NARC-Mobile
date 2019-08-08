@@ -7,19 +7,19 @@ import 'APIWrapper.dart';
 import 'main.dart';
 import 'narcCourses.dart';
 
-class NarcMain extends StatefulWidget {
+class NarcLogin extends StatefulWidget {
   final String firebaseToken;
   final String title;
   final GlobalKey<NavigatorState> navKey;
-  NarcMain({Key key, this.title, this.navKey, this.firebaseToken}) : super(key: key);
+  NarcLogin({Key key, this.title, this.navKey, this.firebaseToken}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return _NarcMainState();
+    return _NarcLoginState();
   }
 }
 
-class _NarcMainState extends State<NarcMain> {
+class _NarcLoginState extends State<NarcLogin> {
   String password;
   String username;
   static final _formKey = GlobalKey<FormState>();
