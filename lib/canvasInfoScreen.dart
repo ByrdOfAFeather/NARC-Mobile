@@ -76,7 +76,7 @@ class _NarcGetCanvasInfoState extends State<NarcGetCanvasInfo> {
                           textAlign: TextAlign.center,
                           decoration: const InputDecoration(
                               labelText: "Canvas URL",
-                              hintText: "canvas.instructure.com"
+                              hintText: "ex: canvas.instructure.com"
                           ),
                           validator: (value) {
                             if (value.isEmpty) {

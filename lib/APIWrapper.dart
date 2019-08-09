@@ -59,13 +59,17 @@ Future<String> attemptLogin(String username, String password, String notificatio
     device = "ios";
   }
   dynamic data = {"password": password, "username": username, "notification_token": notificationToken, "device": device};
-  var response = await http.post(loginURL, body: json.encode(data), headers:{"content-type": "application/json"});
-  if (response.statusCode == 200) {
-    dynamic responseData = json.decode(response.body);
-    return responseData["success"]["data"]["token"];
-  }
-  else {
-    return "";
+  try {
+    var response = await http.post(loginURL, body: json.encode(data), headers: {"content-type": "application/json"});
+    if (response.statusCode == 200) {
+      dynamic responseData = json.decode(response.body);
+      return responseData["success"]["data"]["token"];
+    }
+    else {
+      return "";
+    }
+  } on SocketException {
+    return "SE";
   }
 }
 

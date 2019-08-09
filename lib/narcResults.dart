@@ -180,6 +180,10 @@ class _NarcResults extends State<NarcResults> {
     return users;
   }
 
+  bool showCheaters = false;
+  bool showNonCheaters = false;
+  IconData currentIconCheaters = Icons.arrow_drop_down;
+  IconData currentIconNonCheaters = Icons.arrow_drop_down;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -213,29 +217,35 @@ class _NarcResults extends State<NarcResults> {
                         if (snapshot.data["cheaters"].length >= index) {
                           if (index == 0) {
                             return Card
-                              (color: Colors.black,
-                                child:ListTile(title:Center(child: Text("CHEATERS", style: TextStyle(color: Colors.white),))));
+                              (color: Colors.green,
+                                child:ListTile(onTap: () {setState(() {
+                                  currentIconCheaters = currentIconCheaters == Icons.arrow_drop_down ? Icons.arrow_drop_up : Icons.arrow_drop_down;
+                                  showCheaters = !showCheaters;
+                                });}, trailing: Icon(currentIconCheaters), title:Center(child: Text("ANOMALIES", style: TextStyle(color: Colors.white),))));
                           }
                           index -= 1;
-                          return Card(
+                          return Column(children: <Widget>[ if(showCheaters) Card(
                             child: ListTile(
                               onTap: () {
                                 Navigator.push(
                                     context, MaterialPageRoute(builder: (context) => NarcIndividualView(user: snapshot.data["cheaters"][index])));
                               },
-                              title: Center(child:Text(snapshot.data["cheaters"][index].name)),
+                              title: Center(child:Text(snapshot.data["cheaters"][index].name,)),
                             ),
-                          );
+                          )]);
                         }
                         else {
                           if (index == snapshot.data["cheaters"].length + 1) {
                             return Card
-                              (color: Colors.black,
-                                child:ListTile(title:Center(child: Text("INNOCENTS", style: TextStyle(color: Colors.white),))));
+                              (color: Colors.green,
+                                child:ListTile(onTap: () { setState(() {
+                                  showNonCheaters = !showNonCheaters;
+                                  currentIconNonCheaters = currentIconNonCheaters == Icons.arrow_drop_down ? Icons.arrow_drop_up : Icons.arrow_drop_down;
+                                });}, trailing: Icon(currentIconNonCheaters), title:Center(child: Text("OTHER STUDENTS", style: TextStyle(color: Colors.white),))));
                           }
                           index -= snapshot.data["cheaters"].length;
                           index -= 2;
-                          return Card(
+                          return Column(children: <Widget>[if(showNonCheaters) Card(
                             child: ListTile(
                               onTap: () {
                                 Navigator.push(
@@ -243,7 +253,7 @@ class _NarcResults extends State<NarcResults> {
                               },
                               title: Center(child: Text(snapshot.data["nonCheaters"][index].name)),
                             ),
-                          );
+                          )]);
                       }}));
                 }
               }
