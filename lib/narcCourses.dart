@@ -21,7 +21,7 @@ class _NarcCoursesState extends State<NarcCourses> {
       storage.write(key: "currentCourse", value: id.toString());
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => NarcModules(id: id)),
+        CustomRoute(builder: (context) => NarcModules(id: id)),
       );
     });
   }
