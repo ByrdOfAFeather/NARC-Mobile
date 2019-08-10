@@ -1,18 +1,17 @@
 // Standard Library
 import 'dart:convert';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-// External Imports
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_sqlcipher/sqlite.dart';
 import 'package:flutter_string_encryption/flutter_string_encryption.dart';
-
-// App imports
 import 'package:narc/APIWrapper.dart';
 import 'package:narc/bugReport.dart';
 import 'package:narc/resultsMenu.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import 'loginScreen.dart';
 import 'narcCourses.dart';
 import 'narcQuiz.dart';
@@ -169,6 +168,16 @@ class StatelessSettingsMenu extends StatefulWidget {
 class _StatelessSettingsMenu extends State<StatelessSettingsMenu> {
   bool _canSaveSetting = false;
 
+  _launchPrivacyPolicy() async {
+    const url = "https://www.byrdof.dev/privacy_policy";
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch';
+    }
+  }
+
+
   // TODO: Implementation
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -190,6 +199,10 @@ class _StatelessSettingsMenu extends State<StatelessSettingsMenu> {
                     },
                   )
                 ]),
+              ),
+              FlatButton(
+                child: Text("View Privacy Policy"),
+                onPressed: _launchPrivacyPolicy,
               )
             ],
           ),
