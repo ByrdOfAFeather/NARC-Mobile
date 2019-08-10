@@ -32,6 +32,12 @@ class _ResultsMenuState extends State<ResultsMenu> {
     return;
   }
 
+  Future<void> _refreshResults() async {
+    setState(() {
+      getSavedResults();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(child:Scaffold(
@@ -40,14 +46,14 @@ class _ResultsMenuState extends State<ResultsMenu> {
           centerTitle: true,
           automaticallyImplyLeading: false,
         ),
-        body: FutureBuilder(
+        body: RefreshIndicator(child: FutureBuilder(
           future: getSavedResults(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.data == null && snapshot.connectionState != ConnectionState.done) {
               return Center(child: CircularProgressIndicator());
             }
             else if ((snapshot.data == null || snapshot.data.isEmpty) && snapshot.connectionState == ConnectionState.done) {
-              return Center(child: Text("No results found!"));
+              return Container(child: Center(child: Text("No results found!")));
             }
             else {
               return ListView.builder(
@@ -77,7 +83,7 @@ class _ResultsMenuState extends State<ResultsMenu> {
               );
             }
           },
-        )),
+        ), onRefresh: _refreshResults)),
         onWillPop: () async {return false;}  // Do nothing
     );
   }

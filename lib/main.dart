@@ -18,20 +18,18 @@ import 'narcCourses.dart';
 import 'narcQuiz.dart';
 import 'narcResults.dart';
 
-
 // TODO: ERROR WHEN LOGGING BACK IN FROM THE SAME DEVICE
 
-
 // Firebase global values
-FirebaseMessaging _firebaseMessaging = FirebaseMessaging();  // Firebase messaging controller
+FirebaseMessaging _firebaseMessaging = FirebaseMessaging(); // Firebase messaging controller
 String _firebaseToken; // Token to be passed to the website later to register this device
 
 // This is called whenever a notification is received
 saveResultsAndPushResultsScreen(message, navKey) async {
-  final cryptor = new PlatformStringCryptor();  // Get a object for decryption
-  String screen = message["data"]["screen"];  // Get the string from the notification
-  dynamic results = jsonDecode(message["data"]["results"]);  // Decode the notification's data
-  String name = results["for"];  // Get the quiz's name from the data
+  final cryptor = new PlatformStringCryptor(); // Get a object for decryption
+  String screen = message["data"]["screen"]; // Get the string from the notification
+  dynamic results = jsonDecode(message["data"]["results"]); // Decode the notification's data
+  String name = results["for"]; // Get the quiz's name from the data
 
   // Decrypt the quiz name
   String quizPass = await storage.read(key: "token");
@@ -41,7 +39,8 @@ saveResultsAndPushResultsScreen(message, navKey) async {
 
   // TODO: save the data for later viewing
   SQLiteDatabase db = await getOrCreateDatabase("storage");
-  db.insert(table: "savedresults", values: <String, String> {"quizName": "$name", "results": message["data"]["results"]});
+  db.insert(
+      table: "savedresults", values: <String, String>{"quizName": "$name", "results": message["data"]["results"]});
 
   // TODO: Remove (?)
   // Push the results screen based on the data
@@ -68,35 +67,34 @@ Future<void> firebaseCloudMessagingListeners(navKey) async {
 }
 
 void main() async {
-  SQLiteDatabase db = await getOrCreateDatabase("storage");  // Main database for storing results
+  SQLiteDatabase db = await getOrCreateDatabase("storage"); // Main database for storing results
 
   db.execSQL("""CREATE TABLE IF NOT EXISTS savedresults (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   quizName TEXT NOT NULL,
   results TEXT NOT NULL 
-  )""");  // If the table for results doesn't exist, create it
+  )"""); // If the table for results doesn't exist, create it
 
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);  // Force phone in portrait mode
-  final navKey = GlobalKey<NavigatorState>();  // Get a navigator key for setting up firebase navigations
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]); // Force phone in portrait mode
+  final navKey = GlobalKey<NavigatorState>(); // Get a navigator key for setting up firebase navigations
   await firebaseCloudMessagingListeners(navKey); // Wait for firebase to be setup
-
 
   generateSalt() async {
     // If the salt already exists don't generate a new one (so that results created in a different session can
     // still be accessed
     if (await storage.read(key: "encryptionSalt") != null) {
       return;
-    }
-    else {
+    } else {
       final cryptor = new PlatformStringCryptor();
       final String encryptionSalt = await cryptor.generateSalt();
       storage.write(key: "encryptionSalt", value: encryptionSalt);
     }
   }
-  generateSalt();  // Setup the salt for the program
+
+  generateSalt(); // Setup the salt for the program
 
   // TODO: Test Token
-  String tester = await storage.read(key: "token");  // If user token to the website doesn't exists, send to login
+  String tester = await storage.read(key: "token"); // If user token to the website doesn't exists, send to login
   if (tester != null) {
     runApp(MaterialApp(
         navigatorKey: navKey,
@@ -105,13 +103,9 @@ void main() async {
           cursorColor: Colors.black,
           primarySwatch: Colors.green,
         ),
-        routes: {
-          "/results": (context) => NarcResultsGetPassword(),
-          "/courses": (context) => NarcCourses()
-        },
+        routes: {"/results": (context) => NarcResultsGetPassword(), "/courses": (context) => NarcCourses()},
         home: NarcCourses()));
-  }
-  else {
+  } else {
     runApp(MaterialApp(
         navigatorKey: navKey,
         title: 'NARC',
@@ -119,14 +113,14 @@ void main() async {
           cursorColor: Colors.black,
           primarySwatch: Colors.green,
         ),
-        routes: {
-          "/results": (context) => NarcResultsGetPassword(),
-          "/courses": (context) => NarcCourses()
-        },
-        home: NarcLogin(title: "NARC", navKey: navKey, firebaseToken: _firebaseToken,)));
+        routes: {"/results": (context) => NarcResultsGetPassword(), "/courses": (context) => NarcCourses()},
+        home: NarcLogin(
+          title: "NARC",
+          navKey: navKey,
+          firebaseToken: _firebaseToken,
+        )));
   }
 }
-
 
 class StorageSingleton {
   static FlutterSecureStorage storage;
@@ -142,11 +136,11 @@ class StorageSingleton {
 // Route to remove animations to make Course -> Modules -> Quizzes feel a bit more natural
 // (The constant moving of the bottom nav bar looks incredibly unnatural otherwise.
 class CustomRoute<T> extends MaterialPageRoute<T> {
-  CustomRoute({WidgetBuilder builder, RouteSettings settings})
-      : super(builder: builder, settings: settings);
+  CustomRoute({WidgetBuilder builder, RouteSettings settings}) : super(builder: builder, settings: settings);
 
   @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+  Widget buildTransitions(
+      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
     return child;
   }
 }
@@ -158,17 +152,56 @@ class CanvasItemsBuilder extends StatefulWidget {
   final dynamic onTapFunction;
 
   const CanvasItemsBuilder({Key key, this.title, this.getFunction, this.onTapFunction}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     return _CanvasItemsBuilderState();
   }
 }
 
+
+class StatelessSettingsMenu extends StatefulWidget {
+  State<StatefulWidget> createState() {
+    return _StatelessSettingsMenu();
+  }
+}
+
+class _StatelessSettingsMenu extends State<StatelessSettingsMenu> {
+  bool _canSaveSetting = false;
+
+  // TODO: Implementation
+  Widget build(BuildContext context) {
+    return AlertDialog(
+        title: Text("Settings"),
+        content: Form(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Container(
+                child: Row(children: <Widget>[
+                  Text("Allow NARC to save data?"),
+                  Checkbox(
+                    value: _canSaveSetting,
+                    onChanged: (newVal) {
+                      setState(() {
+                        _canSaveSetting = newVal;
+                      });
+                    },
+                  )
+                ]),
+              )
+            ],
+          ),
+        ));
+  }
+}
+
+
 class _CanvasItemsBuilderState extends State<CanvasItemsBuilder> {
   var navigatorListBody = new List(3);
   var navigatorListAppBar = new List(3);
   int globalNavigationIndex = 0;
-
 
   @override
   Widget build(BuildContext context) {
@@ -180,27 +213,48 @@ class _CanvasItemsBuilderState extends State<CanvasItemsBuilder> {
         } else if (snapshot.data.length == 0) {
           return Container(child: Center(child: Text("No items found!")));
         }
-        return
-          ListView.builder(
-            itemCount: snapshot.data.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Card(
-                  child: ListTile(
-                    onTap: () {
-                      widget.onTapFunction(snapshot.data[index].genericID, snapshot.data[index].genericName);
-                    },
-                    onLongPress: () {
-                      // do nothing
-                    },
-                    title: Text(snapshot.data[index].genericName),
-                  ));
-            },
-          );
+        return ListView.builder(
+          itemCount: snapshot.data.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Card(
+                child: ListTile(
+                  onTap: () {
+                    widget.onTapFunction(snapshot.data[index].genericID, snapshot.data[index].genericName);
+                  },
+                  onLongPress: () {
+                    // do nothing
+                  },
+                  title: Text(snapshot.data[index].genericName),
+                ));
+          },
+        );
       },
     );
+
+
     navigatorListAppBar[0] = AppBar(
       title: Text(widget.title),
       centerTitle: true,
+      actions: <Widget>[
+        PopupMenuButton(
+          itemBuilder: (BuildContext context) {
+            return [
+              // TODO: Come back and fix form updates
+              PopupMenuItem<String>(
+                  value: "Settings",
+                  child: InkWell(
+                    onTap: () async {
+                      Navigator.pop(context, "Settings");
+                      showDialog(
+                          context: context,
+                          builder: (context) => StatelessSettingsMenu());
+                    },
+                    child: Center(child: Text("Settings")),
+                  ))
+            ];
+          },
+        )
+      ],
     );
 
     navigatorListBody[1] = BugReportScreen();
@@ -221,23 +275,34 @@ class _CanvasItemsBuilderState extends State<CanvasItemsBuilder> {
               IconButton(
                 icon: Icon(Icons.home),
                 disabledColor: Colors.green,
-                onPressed: globalNavigationIndex == 0 ? null : () => setState((){ globalNavigationIndex = 0;}),
+                onPressed: globalNavigationIndex == 0
+                    ? null
+                    : () => setState(() {
+                  globalNavigationIndex = 0;
+                }),
               ),
               IconButton(
                   icon: Icon(Icons.bug_report),
                   disabledColor: Colors.green,
-                  onPressed: globalNavigationIndex == 1 ? null : () => setState((){ globalNavigationIndex = 1;},
+                  onPressed: globalNavigationIndex == 1
+                      ? null
+                      : () => setState(
+                        () {
+                      globalNavigationIndex = 1;
+                    },
                   )),
               IconButton(
                   icon: Icon(Icons.folder),
                   disabledColor: Colors.green,
-                  onPressed: globalNavigationIndex == 2 ? null : () => setState((){ globalNavigationIndex = 2;})),
+                  onPressed: globalNavigationIndex == 2
+                      ? null
+                      : () => setState(() {
+                    globalNavigationIndex = 2;
+                  })),
             ],
-          )
-      ),
+          )),
     );
   }
-
 }
 
 class NarcModules extends StatefulWidget {
@@ -253,18 +318,21 @@ class NarcModules extends StatefulWidget {
 }
 
 class _NarcModuleState extends State<NarcModules> {
-
   @override
   Widget build(BuildContext context) {
-    return CanvasItemsBuilder(title: "Modules", getFunction: () {
-      return getModules(widget.id.toString());
-    }, onTapFunction: (moduleID, _) {
-      storage.write(key: "currentModule", value: moduleID.toString());
-      Navigator.push(
-        context,
-        CustomRoute(builder: (context) => NarcQuizzes(title: "Quizzes", moduleID: moduleID.toString())),
-      );
-    }, );
+    return CanvasItemsBuilder(
+      title: "Modules",
+      getFunction: () {
+        return getModules(widget.id.toString());
+      },
+      onTapFunction: (moduleID, _) {
+        storage.write(key: "currentModule", value: moduleID.toString());
+        Navigator.push(
+          context,
+          CustomRoute(builder: (context) => NarcQuizzes(title: "Quizzes", moduleID: moduleID.toString())),
+        );
+      },
+    );
   }
 }
 
@@ -286,99 +354,102 @@ class _NarcQuizzesState extends State<NarcQuizzes> {
   String validationError = "";
   static final _formKey = GlobalKey<FormState>();
 
-
   @override
   Widget build(BuildContext context) {
-    return CanvasItemsBuilder(title:"Quizzes", getFunction: () {
-      return getQuizzes(widget.moduleID);
-    }, onTapFunction: (id, name) {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Set a password"),
-              content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                Form(
-                  key: _formKey,
-                  child: Column(
-                    children: <Widget>[
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          labelText: "Password",
-                          hintText: "This should not be your Canvas password!",
-                        ),
-                        obscureText: true,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return "Password can't be empty!";
-                          } else if (validationError.isNotEmpty) {
-                            return validationError;
-                          } else {
-                            password = value;
-                            return null;
-                          }
-                        },
-                      ),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          labelText: "Confirm Password",
-                        ),
-                        obscureText: true,
-                        validator: (String value) {
-                          if (value.isEmpty) {
-                            return "Passwords must match!";
-                          } else if (validationError.isNotEmpty) {
-                            return validationError;
-                          } else {
-                            confirmPassword = value;
-                            return null;
-                          }
-                        },
-                      ),
-                      Container(
-                          child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[
-                            RaisedButton(
-                                onPressed: () {
-                                  validationError = "";
-                                  if (_formKey.currentState.validate()) {
-                                    validationError = password == confirmPassword ? "" : "Passwords must match!";
-                                    if (_formKey.currentState.validate()) {
-                                      Navigator.pop(context);
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => NarcQuiz(
-                                                quizID: id.toString(),
-                                                password: password,
-                                                quizName: name,
-                                              )));
-                                    }
-                                  }
-                                },
-                                child: Text("Submit")),
-                            RaisedButton(
-                              onPressed: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        content: Text("FERPA requires that data be de-idetinfied when disclosing it with "
-                                            "a third party. For this reason, a reidentificiton process has to take place "
-                                            "when the data is returned to you. To ensure this reidentification can only "
-                                            "take place by authorized users, a password must be provided to "
-                                            "secure the data."),
-                                      );
-                                    });
-                              },
-                              child: Text("Why?"),
+    return CanvasItemsBuilder(
+        title: "Quizzes",
+        getFunction: () {
+          return getQuizzes(widget.moduleID);
+        },
+        onTapFunction: (id, name) {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text("Set a password"),
+                  content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        children: <Widget>[
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              labelText: "Password",
+                              hintText: "This should not be your Canvas password!",
                             ),
-                          ]))
-                    ],
-                  ),
-                )
-              ]),
-            );
-          });
-    });
+                            obscureText: true,
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return "Password can't be empty!";
+                              } else if (validationError.isNotEmpty) {
+                                return validationError;
+                              } else {
+                                password = value;
+                                return null;
+                              }
+                            },
+                          ),
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              labelText: "Confirm Password",
+                            ),
+                            obscureText: true,
+                            validator: (String value) {
+                              if (value.isEmpty) {
+                                return "Passwords must match!";
+                              } else if (validationError.isNotEmpty) {
+                                return validationError;
+                              } else {
+                                confirmPassword = value;
+                                return null;
+                              }
+                            },
+                          ),
+                          Container(
+                              child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[
+                                RaisedButton(
+                                    onPressed: () {
+                                      validationError = "";
+                                      if (_formKey.currentState.validate()) {
+                                        validationError = password == confirmPassword ? "" : "Passwords must match!";
+                                        if (_formKey.currentState.validate()) {
+                                          Navigator.pop(context);
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => NarcQuiz(
+                                                    quizID: id.toString(),
+                                                    password: password,
+                                                    quizName: name,
+                                                  )));
+                                        }
+                                      }
+                                    },
+                                    child: Text("Submit")),
+                                RaisedButton(
+                                  onPressed: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            content: Text(
+                                                "FERPA requires that data be de-idetinfied when disclosing it with "
+                                                    "a third party. For this reason, a reidentificiton process has to take place "
+                                                    "when the data is returned to you. To ensure this reidentification can only "
+                                                    "take place by authorized users, a password must be provided to "
+                                                    "secure the data."),
+                                          );
+                                        });
+                                  },
+                                  child: Text("Why?"),
+                                ),
+                              ]))
+                        ],
+                      ),
+                    )
+                  ]),
+                );
+              });
+        });
   }
 }
