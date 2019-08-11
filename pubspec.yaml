@@ -30,6 +30,7 @@ dependencies:
   crypto: any
   flutter_sqlcipher: ^0.4.3
   flutter_string_encryption: ^0.3.1
+  flutter_local_notifications: ^0.8.1
 
 dev_dependencies:
   flutter_launcher_icons: "^0.7.0"

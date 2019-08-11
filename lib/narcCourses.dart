@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'APIWrapper.dart';
+import 'canvasItemBuilders.dart';
 import 'main.dart';
 
 class NarcCourses extends StatefulWidget {
