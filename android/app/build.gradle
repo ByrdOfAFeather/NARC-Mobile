@@ -33,10 +33,6 @@ if (keystorePropertiesFile.exists()) {
 android {
     compileSdkVersion 28
 
-    lintOptions {
-        disable 'InvalidPackage'
-    }
-
     defaultConfig {
         applicationId "com.byrdofafeather.narc"
         minSdkVersion 18
