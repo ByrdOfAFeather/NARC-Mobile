@@ -59,6 +59,7 @@ class _NarcResultsGetPasswordState extends State<NarcResultsGetPassword> {
                   },
                 ),
                 RaisedButton(
+                  color: Colors.green,
                     onPressed: () {
                       if (_formKey.currentState.validate()) {
                         showDialog(context: context, builder: (BuildContext context) {
@@ -75,6 +76,7 @@ class _NarcResultsGetPasswordState extends State<NarcResultsGetPassword> {
                                           "cheated or that someone has not cheated. As well, do not use this as the determining indicator "
                                           "that someone has cheated or that someone has not cheated. "),
                                       RaisedButton(
+                                        color: Colors.green,
                                         onPressed: () {
                                           Navigator.pop(context);
                                           Navigator.pushReplacement(
@@ -86,7 +88,7 @@ class _NarcResultsGetPasswordState extends State<NarcResultsGetPassword> {
                                                     results: results,
                                                   )));
                                         },
-                                        child: Text("OK")
+                                        child: Text("OK", style: TextStyle(color: Colors.white),)
                                       )
                                     ]
                                 )
@@ -95,7 +97,7 @@ class _NarcResultsGetPasswordState extends State<NarcResultsGetPassword> {
                         });
                       }
                     },
-                    child: Text("Submit"))
+                    child: Text("Submit", style: TextStyle(color: Colors.white),))
               ],
             ),
           ),
@@ -203,10 +205,11 @@ class _NarcResults extends State<NarcResults> {
                     Padding(child:Center(child: Text("Password is invalid")), padding: EdgeInsets.symmetric(vertical: 16),),
                     // TODO: This pops back to modules not quizzes hrm
                     RaisedButton(
+                      color: Colors.green,
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: Text("Back"),
+                      child: Text("Back", style: TextStyle(color: Colors.green)),
                     )
                   ]);
                 }

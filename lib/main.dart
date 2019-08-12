@@ -58,8 +58,7 @@ Future<void> firebaseCloudMessagingListeners(GlobalKey<NavigatorState> navKey) a
         if (await Vibration.hasVibrator()) {
           Vibration.vibrate();
         }
-      }
-      else {
+      } else {
         await saveResultsAndPushResultsScreen(message, navKey);
       }
     },
@@ -67,13 +66,14 @@ Future<void> firebaseCloudMessagingListeners(GlobalKey<NavigatorState> navKey) a
       navKey.currentState.pushNamedAndRemoveUntil("/resultsMenu", (_) => false);
     },
     onLaunch: (Map<String, dynamic> message) async {
-      navKey.currentState.pushNamed("/resultsMenu",);
+      navKey.currentState.pushNamed(
+        "/resultsMenu",
+      );
     },
   );
   _firebaseMessaging
       .requestNotificationPermissions(const IosNotificationSettings(sound: true, badge: true, alert: true));
 }
-
 
 void main() async {
   SQLiteDatabase db = await getOrCreateDatabase("storage"); // Main database for storing results
@@ -112,7 +112,15 @@ void main() async {
           cursorColor: Colors.black,
           primarySwatch: Colors.green,
         ),
-        routes: {"/results": (context) => NarcResultsGetPassword(), "/courses": (context) => NarcMainMenu(initalIndex: 0,), "/resultsMenu": (context) => NarcMainMenu(initalIndex: 2,)},
+        routes: {
+          "/results": (context) => NarcResultsGetPassword(),
+          "/courses": (context) => NarcMainMenu(
+            initalIndex: 0,
+          ),
+          "/resultsMenu": (context) => NarcMainMenu(
+            initalIndex: 2,
+          )
+        },
         home: NarcMainMenu(initalIndex: 0)));
   } else {
     runApp(MaterialApp(
@@ -122,7 +130,12 @@ void main() async {
           cursorColor: Colors.black,
           primarySwatch: Colors.green,
         ),
-        routes: {"/results": (context) => NarcResultsGetPassword(), "/courses": (context) => NarcMainMenu(initalIndex: 0,)},
+        routes: {
+          "/results": (context) => NarcResultsGetPassword(),
+          "/courses": (context) => NarcMainMenu(
+            initalIndex: 0,
+          )
+        },
         home: NarcLogin(
           title: "NARC",
           navKey: navKey,
@@ -154,7 +167,6 @@ class CustomRoute<T> extends MaterialPageRoute<T> {
   }
 }
 
-
 class NarcModules extends StatefulWidget {
   final String title;
   final int id;
@@ -181,7 +193,8 @@ class _NarcModuleState extends State<NarcModules> {
           context,
           CustomRoute(builder: (context) => NarcQuizzes(title: "Quizzes", moduleID: moduleID.toString())),
         );
-      }, initGlobalNavigationIndex: 0,
+      },
+      initGlobalNavigationIndex: 0,
     );
   }
 }
@@ -207,99 +220,104 @@ class _NarcQuizzesState extends State<NarcQuizzes> {
   @override
   Widget build(BuildContext context) {
     return MainMenuBuilder(
-        title: "Quizzes",
-        getFunction: () {
-          return getQuizzes(widget.moduleID);
-        },
-        onTapFunction: (id, name) {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text("Set a password"),
-                  content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                    Form(
-                      key: _formKey,
-                      child: Column(
-                        children: <Widget>[
-                          TextFormField(
-                            decoration: const InputDecoration(
-                              labelText: "Password",
-                              hintText: "This should not be your Canvas password!",
-                            ),
-                            obscureText: true,
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return "Password can't be empty!";
-                              } else if (validationError.isNotEmpty) {
-                                return validationError;
-                              } else {
-                                password = value;
-                                return null;
+      title: "Quizzes",
+      getFunction: () {
+        return getQuizzes(widget.moduleID);
+      },
+      onTapFunction: (id, name) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Set a password"),
+                content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      children: <Widget>[
+                        TextFormField(
+                          decoration: const InputDecoration(
+                            labelText: "Password",
+                            hintText: "This should not be your Canvas password!",
+                          ),
+                          obscureText: true,
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return "Password can't be empty!";
+                            } else if (validationError.isNotEmpty) {
+                              return validationError;
+                            } else {
+                              password = value;
+                              return null;
+                            }
+                          },
+                        ),
+                        TextFormField(
+                          decoration: const InputDecoration(
+                            labelText: "Confirm Password",
+                          ),
+                          obscureText: true,
+                          validator: (String value) {
+                            if (value.isEmpty) {
+                              return "Passwords must match!";
+                            } else if (validationError.isNotEmpty) {
+                              return validationError;
+                            } else {
+                              confirmPassword = value;
+                              return null;
+                            }
+                          },
+                        ),
+//                          Container(
+//                              child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[
+                        IconButton(
+                          icon: Icon(Icons.info_outline),
+                          color: Colors.green,
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    content: Text("FERPA requires that data be de-idetinfied when disclosing it with "
+                                        "a third party. For this reason, a reidentificiton process has to take place "
+                                        "when the data is returned to you. To ensure this reidentification can only "
+                                        "take place by authorized users, a password must be provided to "
+                                        "secure the data."),
+                                  );
+                                });
+                          },
+                        ),
+                        RaisedButton(
+                            color: Colors.green,
+                            onPressed: () {
+                              validationError = "";
+                              if (_formKey.currentState.validate()) {
+                                validationError = password == confirmPassword ? "" : "Passwords must match!";
+                                if (_formKey.currentState.validate()) {
+                                  Navigator.pop(context);
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => NarcQuiz(
+                                            quizID: id.toString(),
+                                            password: password,
+                                            quizName: name,
+                                          )));
+                                }
                               }
                             },
-                          ),
-                          TextFormField(
-                            decoration: const InputDecoration(
-                              labelText: "Confirm Password",
-                            ),
-                            obscureText: true,
-                            validator: (String value) {
-                              if (value.isEmpty) {
-                                return "Passwords must match!";
-                              } else if (validationError.isNotEmpty) {
-                                return validationError;
-                              } else {
-                                confirmPassword = value;
-                                return null;
-                              }
-                            },
-                          ),
-                          Container(
-                              child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[
-                                RaisedButton(
-                                    onPressed: () {
-                                      validationError = "";
-                                      if (_formKey.currentState.validate()) {
-                                        validationError = password == confirmPassword ? "" : "Passwords must match!";
-                                        if (_formKey.currentState.validate()) {
-                                          Navigator.pop(context);
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) => NarcQuiz(
-                                                    quizID: id.toString(),
-                                                    password: password,
-                                                    quizName: name,
-                                                  )));
-                                        }
-                                      }
-                                    },
-                                    child: Text("Submit")),
-                                RaisedButton(
-                                  onPressed: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            content: Text(
-                                                "FERPA requires that data be de-idetinfied when disclosing it with "
-                                                    "a third party. For this reason, a reidentificiton process has to take place "
-                                                    "when the data is returned to you. To ensure this reidentification can only "
-                                                    "take place by authorized users, a password must be provided to "
-                                                    "secure the data."),
-                                          );
-                                        });
-                                  },
-                                  child: Text("Why?"),
-                                ),
-                              ]))
-                        ],
-                      ),
-                    )
-                  ]),
-                );
-              });
-        }, initGlobalNavigationIndex: 0,);
+                            child: Text(
+                              "Submit",
+                              style: TextStyle(color: Colors.white),
+                            )),
+                      ],
+                    ),
+                  )
+                ]),
+              );
+            });
+      },
+      initGlobalNavigationIndex: 0,
+    );
   }
 }
