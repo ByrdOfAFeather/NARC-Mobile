@@ -6,16 +6,17 @@ import 'package:url_launcher/url_launcher.dart';
 import 'bugReport.dart';
 
 // Generic builder for items from Canvas (Courses, Modules, Quizzes)
-class CanvasItemsBuilder extends StatefulWidget {
+class MainMenuBuilder extends StatefulWidget {
   final String title;
   final dynamic getFunction;
   final dynamic onTapFunction;
+  final int initGlobalNavigationIndex;
 
-  const CanvasItemsBuilder({Key key, this.title, this.getFunction, this.onTapFunction}) : super(key: key);
+  MainMenuBuilder({Key key, this.title, this.getFunction, this.onTapFunction, this.initGlobalNavigationIndex}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return _CanvasItemsBuilderState();
+    return _MainMenuBuilderState();
   }
 }
 
@@ -72,13 +73,18 @@ class _StatelessSettingsMenu extends State<StatelessSettingsMenu> {
 }
 
 
-class _CanvasItemsBuilderState extends State<CanvasItemsBuilder> {
+class _MainMenuBuilderState extends State<MainMenuBuilder> {
   var navigatorListBody = new List(3);
   var navigatorListAppBar = new List(3);
+  bool assignedDef = false;
   int globalNavigationIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    if (!assignedDef) {
+      globalNavigationIndex = widget.initGlobalNavigationIndex;
+      assignedDef = !assignedDef;
+    }
     navigatorListBody[0] = FutureBuilder(
       future: widget.getFunction(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {

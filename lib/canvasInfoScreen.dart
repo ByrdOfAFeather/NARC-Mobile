@@ -112,7 +112,7 @@ class _NarcGetCanvasInfoState extends State<NarcGetCanvasInfo> {
                                     Navigator.pop(context);
                                     Navigator.pushReplacement(
                                       context,
-                                      MaterialPageRoute(builder: (context) => NarcCourses()),
+                                      MaterialPageRoute(builder: (context) => NarcMainMenu(initalIndex: 0)),
                                     );
                                   }
                                   else {

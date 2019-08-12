@@ -122,7 +122,7 @@ class _NarcLoginState extends State<NarcLogin> {
                                   } else {
                                     Navigator.pushReplacement(
                                       context,
-                                      MaterialPageRoute(builder: (context) => NarcCourses()),
+                                      MaterialPageRoute(builder: (context) => NarcMainMenu(initalIndex: 0,)),
                                     );
                                   }
                                 } else {

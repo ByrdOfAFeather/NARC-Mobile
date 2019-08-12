@@ -11,6 +11,8 @@ import 'package:flutter_string_encryption/flutter_string_encryption.dart';
 
 // App imports
 import 'package:narc/APIWrapper.dart';
+import 'package:narc/resultsMenu.dart';
+import 'package:vibration/vibration.dart';
 import 'canvasItemBuilders.dart';
 
 import 'loginScreen.dart';
@@ -48,18 +50,24 @@ saveResultsAndPushResultsScreen(message, navKey) async {
 }
 
 // This function sets up cloud base to follow instructions based on the type of notification received and the app state
-Future<void> firebaseCloudMessagingListeners(navKey) async {
+Future<void> firebaseCloudMessagingListeners(GlobalKey<NavigatorState> navKey) async {
   _firebaseToken = await _firebaseMessaging.getToken();
   _firebaseMessaging.configure(
     onMessage: (Map<String, dynamic> message) async {
-      // TODO: Make local notifications
-      await saveResultsAndPushResultsScreen(message, navKey);
+      if (message["data"]["type"] == "notification") {
+        if (await Vibration.hasVibrator()) {
+          Vibration.vibrate();
+        }
+      }
+      else {
+        await saveResultsAndPushResultsScreen(message, navKey);
+      }
     },
     onResume: (Map<String, dynamic> message) async {
-      await saveResultsAndPushResultsScreen(message, navKey);
+      navKey.currentState.pushNamedAndRemoveUntil("/resultsMenu", (_) => false);
     },
     onLaunch: (Map<String, dynamic> message) async {
-      await saveResultsAndPushResultsScreen(message, navKey);
+      navKey.currentState.pushNamed("/resultsMenu",);
     },
   );
   _firebaseMessaging
@@ -104,8 +112,8 @@ void main() async {
           cursorColor: Colors.black,
           primarySwatch: Colors.green,
         ),
-        routes: {"/results": (context) => NarcResultsGetPassword(), "/courses": (context) => NarcCourses()},
-        home: NarcCourses()));
+        routes: {"/results": (context) => NarcResultsGetPassword(), "/courses": (context) => NarcMainMenu(initalIndex: 0,), "/resultsMenu": (context) => NarcMainMenu(initalIndex: 2,)},
+        home: NarcMainMenu(initalIndex: 0)));
   } else {
     runApp(MaterialApp(
         navigatorKey: navKey,
@@ -114,7 +122,7 @@ void main() async {
           cursorColor: Colors.black,
           primarySwatch: Colors.green,
         ),
-        routes: {"/results": (context) => NarcResultsGetPassword(), "/courses": (context) => NarcCourses()},
+        routes: {"/results": (context) => NarcResultsGetPassword(), "/courses": (context) => NarcMainMenu(initalIndex: 0,)},
         home: NarcLogin(
           title: "NARC",
           navKey: navKey,
@@ -162,7 +170,7 @@ class NarcModules extends StatefulWidget {
 class _NarcModuleState extends State<NarcModules> {
   @override
   Widget build(BuildContext context) {
-    return CanvasItemsBuilder(
+    return MainMenuBuilder(
       title: "Modules",
       getFunction: () {
         return getModules(widget.id.toString());
@@ -173,7 +181,7 @@ class _NarcModuleState extends State<NarcModules> {
           context,
           CustomRoute(builder: (context) => NarcQuizzes(title: "Quizzes", moduleID: moduleID.toString())),
         );
-      },
+      }, initGlobalNavigationIndex: 0,
     );
   }
 }
@@ -198,7 +206,7 @@ class _NarcQuizzesState extends State<NarcQuizzes> {
 
   @override
   Widget build(BuildContext context) {
-    return CanvasItemsBuilder(
+    return MainMenuBuilder(
         title: "Quizzes",
         getFunction: () {
           return getQuizzes(widget.moduleID);
@@ -292,6 +300,6 @@ class _NarcQuizzesState extends State<NarcQuizzes> {
                   ]),
                 );
               });
-        });
+        }, initGlobalNavigationIndex: 0,);
   }
 }
