@@ -12,7 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:narc/main.dart';
 
-final String baseURL = "http://192.168.1.233:8000";
+final String baseURL = "https://www.byrdof.dev";
 final String loginURL = "$baseURL/api/token_auth/";
 final String createURL = "$baseURL/api/create_user/";
 
