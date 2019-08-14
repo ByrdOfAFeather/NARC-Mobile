@@ -20,7 +20,7 @@ import 'narcCourses.dart';
 import 'narcQuiz.dart';
 import 'narcResults.dart';
 
-// TODO: ERROR WHEN LOGGING BACK IN FROM THE SAME DEVICE
+// TODO: ERROR WHEN LOGGING BACK IN FROM THE SAME DEVICE kkkj;alksdjf;laksdjf;lkasjdfl;kjasd;flkjasldkfj;lkasdjf;lkajsdf
 
 // Firebase global values
 FirebaseMessaging _firebaseMessaging = FirebaseMessaging(); // Firebase messaging controller
@@ -84,7 +84,6 @@ void main() async {
   results TEXT NOT NULL 
   )"""); // If the table for results doesn't exist, create it
 
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]); // Force phone in portrait mode
   final navKey = GlobalKey<NavigatorState>(); // Get a navigator key for setting up firebase navigations
   await firebaseCloudMessagingListeners(navKey); // Wait for firebase to be setup
 
