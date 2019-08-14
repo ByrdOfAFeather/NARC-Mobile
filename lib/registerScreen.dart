@@ -178,9 +178,9 @@ class _NarcRegisterState extends State<NarcRegister> {
                                         storage.write(key: "canStore", value: "true");
                                       }
                                       _scaffoldKey.currentState.removeCurrentSnackBar();
-                                      Navigator.pop(context);
-                                      Navigator.pushReplacement(
-                                          context, MaterialPageRoute(builder: (context) => NarcGetCanvasInfo()));
+                                      Navigator.pushAndRemoveUntil(
+                                          context, MaterialPageRoute(builder: (context) => GetCanvasURL()),
+                                          (_) => false);
                                     }
                                     else {
                                       _scaffoldKey.currentState.removeCurrentSnackBar();
