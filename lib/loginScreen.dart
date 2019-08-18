@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:narc/canvasInfoScreen.dart';
 import 'package:narc/registerScreen.dart';
+import 'package:narc/mainMenu.dart';
 
 import 'APIWrapper.dart';
 import 'main.dart';
-import 'narcCourses.dart';
 
 class NarcLogin extends StatefulWidget {
   final String firebaseToken;
@@ -41,11 +41,11 @@ class _NarcLoginState extends State<NarcLogin> {
         centerTitle: true,
       ),
       body: ListView(children: <Widget>[
-        Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+        Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[
           Form(
             key: _formKey,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 new Image.asset(
                   'assets/narc.png',
@@ -122,7 +122,7 @@ class _NarcLoginState extends State<NarcLogin> {
                                   } else {
                                     Navigator.pushReplacement(
                                       context,
-                                      MaterialPageRoute(builder: (context) => NarcMainMenu(initalIndex: 0,)),
+                                      MaterialPageRoute(builder: (context) => MainMenuWrapper),
                                     );
                                   }
                                 } else {

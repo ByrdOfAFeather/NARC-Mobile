@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:narc/mainMenu.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'APIWrapper.dart';
 import 'main.dart';
-import 'narcCourses.dart';
 
 class GetCanvasURL extends StatefulWidget {
   @override
@@ -141,6 +141,7 @@ class _GetCanvasTokenState extends State<GetCanvasToken> {
             child: Column(
               children: <Widget>[
                 TextFormField(
+                  obscureText: true,
                   decoration: InputDecoration(
                     labelText: "Canvas API Token",
                     hintText: "This can be generated in your settings!",
@@ -187,7 +188,7 @@ class _GetCanvasTokenState extends State<GetCanvasToken> {
                                   _scaffoldKey.currentState.removeCurrentSnackBar();
                                   Navigator.pushAndRemoveUntil(
                                     context,
-                                    MaterialPageRoute(builder: (context) => NarcMainMenu(initalIndex: 0)), (_) => false);
+                                    MaterialPageRoute(builder: (context) => MainMenuWrapper), (_) => false);
                                 } else {
                                   tokenValidationError = "Error! Please Check your Token!";
                                   _scaffoldKey.currentState.removeCurrentSnackBar();
@@ -313,7 +314,7 @@ class _NarcGetCanvasInfoState extends State<NarcGetCanvasInfo> {
                                 Navigator.pop(context);
                                 Navigator.pushReplacement(
                                   context,
-                                  MaterialPageRoute(builder: (context) => NarcMainMenu(initalIndex: 0)),
+                                  MaterialPageRoute(builder: (context) => MainMenuWrapper),
                                 );
                               } else {
                                 tokenTestError = "Error! Please Check URL and your Token!";

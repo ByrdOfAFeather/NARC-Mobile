@@ -1,7 +1,6 @@
 // Standard Library
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 // External Imports
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -11,13 +10,10 @@ import 'package:flutter_string_encryption/flutter_string_encryption.dart';
 
 // App imports
 import 'package:narc/APIWrapper.dart';
-import 'package:narc/resultsMenu.dart';
+import 'package:narc/mainMenu.dart';
 import 'package:vibration/vibration.dart';
-import 'canvasItemBuilders.dart';
 
 import 'loginScreen.dart';
-import 'narcCourses.dart';
-import 'narcQuiz.dart';
 import 'narcResults.dart';
 
 // TODO: ERROR WHEN LOGGING BACK IN FROM THE SAME DEVICE kkkj;alksdjf;laksdjf;lkasjdfl;kjasd;flkjasldkfj;lkasdjf;lkajsdf
@@ -75,6 +71,8 @@ Future<void> firebaseCloudMessagingListeners(GlobalKey<NavigatorState> navKey) a
       .requestNotificationPermissions(const IosNotificationSettings(sound: true, badge: true, alert: true));
 }
 
+final navKey = GlobalKey<NavigatorState>(); // Get a navigator key for setting up firebase navigations
+
 void main() async {
   SQLiteDatabase db = await getOrCreateDatabase("storage"); // Main database for storing results
 
@@ -84,7 +82,6 @@ void main() async {
   results TEXT NOT NULL 
   )"""); // If the table for results doesn't exist, create it
 
-  final navKey = GlobalKey<NavigatorState>(); // Get a navigator key for setting up firebase navigations
   await firebaseCloudMessagingListeners(navKey); // Wait for firebase to be setup
 
   generateSalt() async {
@@ -113,14 +110,10 @@ void main() async {
         ),
         routes: {
           "/results": (context) => NarcResultsGetPassword(),
-          "/courses": (context) => NarcMainMenu(
-            initalIndex: 0,
-          ),
-          "/resultsMenu": (context) => NarcMainMenu(
-            initalIndex: 2,
-          )
+          "/courses": (context) => MainMenuWrapper,
+          "/resultsMenu": (context) => MainMenuWrapper
         },
-        home: NarcMainMenu(initalIndex: 0)));
+        home: MainMenuWrapper));
   } else {
     runApp(MaterialApp(
         navigatorKey: navKey,
@@ -131,9 +124,7 @@ void main() async {
         ),
         routes: {
           "/results": (context) => NarcResultsGetPassword(),
-          "/courses": (context) => NarcMainMenu(
-            initalIndex: 0,
-          )
+          "/courses": (context) => MainMenuWrapper,
         },
         home: NarcLogin(
           title: "NARC",
@@ -163,160 +154,5 @@ class CustomRoute<T> extends MaterialPageRoute<T> {
   Widget buildTransitions(
       BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
     return child;
-  }
-}
-
-class NarcModules extends StatefulWidget {
-  final String title;
-  final int id;
-
-  NarcModules({Key key, this.title, this.id}) : super(key: key);
-
-  @override
-  State<StatefulWidget> createState() {
-    return _NarcModuleState();
-  }
-}
-
-class _NarcModuleState extends State<NarcModules> {
-  @override
-  Widget build(BuildContext context) {
-    return MainMenuBuilder(
-      title: "Modules",
-      getFunction: () {
-        return getModules(widget.id.toString());
-      },
-      onTapFunction: (moduleID, _) {
-        storage.write(key: "currentModule", value: moduleID.toString());
-        Navigator.push(
-          context,
-          CustomRoute(builder: (context) => NarcQuizzes(title: "Quizzes", moduleID: moduleID.toString())),
-        );
-      },
-      initGlobalNavigationIndex: 0,
-    );
-  }
-}
-
-class NarcQuizzes extends StatefulWidget {
-  final String title;
-  final String moduleID;
-
-  NarcQuizzes({Key key, this.title, this.moduleID}) : super(key: key);
-
-  @override
-  State<StatefulWidget> createState() {
-    return _NarcQuizzesState();
-  }
-}
-
-class _NarcQuizzesState extends State<NarcQuizzes> {
-  String password;
-  String confirmPassword;
-  String validationError = "";
-  static final _formKey = GlobalKey<FormState>();
-
-  @override
-  Widget build(BuildContext context) {
-    return MainMenuBuilder(
-      title: "Quizzes",
-      getFunction: () {
-        return getQuizzes(widget.moduleID);
-      },
-      onTapFunction: (id, name) {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text("Set a password"),
-                content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      children: <Widget>[
-                        TextFormField(
-                          decoration: const InputDecoration(
-                            labelText: "Password",
-                            hintText: "This should not be your Canvas password!",
-                          ),
-                          obscureText: true,
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return "Password can't be empty!";
-                            } else if (validationError.isNotEmpty) {
-                              return validationError;
-                            } else {
-                              password = value;
-                              return null;
-                            }
-                          },
-                        ),
-                        TextFormField(
-                          decoration: const InputDecoration(
-                            labelText: "Confirm Password",
-                          ),
-                          obscureText: true,
-                          validator: (String value) {
-                            if (value.isEmpty) {
-                              return "Passwords must match!";
-                            } else if (validationError.isNotEmpty) {
-                              return validationError;
-                            } else {
-                              confirmPassword = value;
-                              return null;
-                            }
-                          },
-                        ),
-//                          Container(
-//                              child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[
-                        IconButton(
-                          icon: Icon(Icons.info_outline),
-                          color: Colors.green,
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    content: Text("FERPA requires that data be de-idetinfied when disclosing it with "
-                                        "a third party. For this reason, a reidentificiton process has to take place "
-                                        "when the data is returned to you. To ensure this reidentification can only "
-                                        "take place by authorized users, a password must be provided to "
-                                        "secure the data."),
-                                  );
-                                });
-                          },
-                        ),
-                        RaisedButton(
-                            color: Colors.green,
-                            onPressed: () {
-                              validationError = "";
-                              if (_formKey.currentState.validate()) {
-                                validationError = password == confirmPassword ? "" : "Passwords must match!";
-                                if (_formKey.currentState.validate()) {
-                                  Navigator.pop(context);
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => NarcQuiz(
-                                            quizID: id.toString(),
-                                            password: password,
-                                            quizName: name,
-                                          )));
-                                }
-                              }
-                            },
-                            child: Text(
-                              "Submit",
-                              style: TextStyle(color: Colors.white),
-                            )),
-                      ],
-                    ),
-                  )
-                ]),
-              );
-            });
-      },
-      initGlobalNavigationIndex: 0,
-    );
   }
 }

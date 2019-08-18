@@ -12,7 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:narc/main.dart';
 
-final String baseURL = "http://192.168.1.233:8000";
+final String baseURL = "http://152.23.64.121:8000";
 final String loginURL = "$baseURL/api/token_auth/";
 final String createURL = "$baseURL/api/create_user/";
 
@@ -144,14 +144,16 @@ Future<List<GenericCanvasItem>> getCourses() async {
   return  _getGeneric(endPoint, token);
 }
 
-Future<List<GenericCanvasItem>> getModules(String courseID) async {
+Future<List<GenericCanvasItem>> getModules() async {
+  String currentCourse = await storage.read(key: "currentCourse");
   String token = await storage.read(key: "apiKey");
   String url = await storage.read(key: "url");
-  String endPoint = "https://" + url + "/api/v1/courses/$courseID/modules";
+  String endPoint = "https://" + url + "/api/v1/courses/$currentCourse/modules";
   return  _getGeneric(endPoint, token);
 }
 
-Future<List<GenericCanvasItem>> getQuizzes(String moduleID) async {
+Future<List<GenericCanvasItem>> getQuizzes() async {
+  String moduleID = await storage.read(key: "moduleID");
   String courseID = await storage.read(key: "currentCourse");
   String token = await storage.read(key: "apiKey");
   String url = await storage.read(key: "url");
