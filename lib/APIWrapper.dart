@@ -12,7 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:narc/main.dart';
 
-final String baseURL = "http://152.23.64.121:8000";
+final String baseURL = "http://192.168.43.116:8000";
 final String loginURL = "$baseURL/api/token_auth/";
 final String createURL = "$baseURL/api/create_user/";
 

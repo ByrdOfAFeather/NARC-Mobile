@@ -166,8 +166,9 @@ class _CanvasMenuState extends State<CanvasMenu> {
 
 class MainMenu extends StatefulWidget {
   final CanvasMenu canvasMenu;
+  final int startingIndex;
 
-  MainMenu({Key key, this.canvasMenu}) : super(key: key);
+  MainMenu({Key key, this.canvasMenu, this.startingIndex}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -180,6 +181,7 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
 
   void initState() {
     _controller = TabController(length: 3, vsync: this);
+    _controller.animateTo(widget.startingIndex);
     super.initState();
   }
 
@@ -210,12 +212,14 @@ class _MainMenuState extends State<MainMenu> with SingleTickerProviderStateMixin
 }
 
 Widget MainMenuWrapper = MainMenu(
+  startingIndex: 0,
   canvasMenu: CanvasMenu(
     title: "Courses",
     onTapFunction: (id, _) {
       storage.write(key: "currentCourse", value: id.toString());
       navKey.currentState.push(CustomRoute(
           builder: (BuildContext context) => MainMenu(
+            startingIndex: 0,
             canvasMenu: CanvasMenu(
               title: "Modules",
               getFunction: () {
@@ -225,6 +229,49 @@ Widget MainMenuWrapper = MainMenu(
                 storage.write(key: "moduleID", value: id.toString());
                 navKey.currentState.push(CustomRoute(
                     builder: (BuildContext context) => MainMenu(
+                      startingIndex: 0,
+                        canvasMenu: CanvasMenu(
+                            title: "Quizzes",
+                            getFunction: () {
+                              return getQuizzes();
+                            },
+                            onTapFunction: (id, name) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return CustomAlertDialog(name: name, id: id);
+                                },
+                              );
+                            }))));
+              },
+            ),
+          )));
+    },
+    getFunction: () {
+      return getCourses();
+    },
+  ),
+);
+
+Widget ResultsMenuWrapper = MainMenu(
+  startingIndex: 2,
+  canvasMenu: CanvasMenu(
+    title: "Courses",
+    onTapFunction: (id, _) {
+      storage.write(key: "currentCourse", value: id.toString());
+      navKey.currentState.push(CustomRoute(
+          builder: (BuildContext context) => MainMenu(
+            startingIndex: 0,
+            canvasMenu: CanvasMenu(
+              title: "Modules",
+              getFunction: () {
+                return getModules();
+              },
+              onTapFunction: (id, _) {
+                storage.write(key: "moduleID", value: id.toString());
+                navKey.currentState.push(CustomRoute(
+                    builder: (BuildContext context) => MainMenu(
+                      startingIndex: 0,
                         canvasMenu: CanvasMenu(
                             title: "Quizzes",
                             getFunction: () {

@@ -16,7 +16,14 @@ import 'package:vibration/vibration.dart';
 import 'loginScreen.dart';
 import 'narcResults.dart';
 
-// TODO: ERROR WHEN LOGGING BACK IN FROM THE SAME DEVICE kkkj;alksdjf;laksdjf;lkasjdfl;kjasd;flkjasldkfj;lkasdjf;lkajsdf
+// TODO: ERROR WHEN LOGGING BACK IN FROM THE SAME DEVICE
+
+final routes = {
+  "/courses": (context) => MainMenuWrapper,
+  "/resultsMenu": (context) => ResultsMenuWrapper,
+  "/results": (context) => NarcResultsGetPassword()
+};
+
 
 // Firebase global values
 FirebaseMessaging _firebaseMessaging = FirebaseMessaging(); // Firebase messaging controller
@@ -108,11 +115,7 @@ void main() async {
           cursorColor: Colors.black,
           primarySwatch: Colors.green,
         ),
-        routes: {
-          "/results": (context) => NarcResultsGetPassword(),
-          "/courses": (context) => MainMenuWrapper,
-          "/resultsMenu": (context) => MainMenuWrapper
-        },
+        routes: routes,
         home: MainMenuWrapper));
   } else {
     runApp(MaterialApp(
@@ -122,10 +125,7 @@ void main() async {
           cursorColor: Colors.black,
           primarySwatch: Colors.green,
         ),
-        routes: {
-          "/results": (context) => NarcResultsGetPassword(),
-          "/courses": (context) => MainMenuWrapper,
-        },
+        routes: routes,
         home: NarcLogin(
           title: "NARC",
           navKey: navKey,
